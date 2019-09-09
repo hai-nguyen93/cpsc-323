@@ -1,82 +1,40 @@
-#include "LexicalAnalyzer.h"
-#include <iostream>
+#pragma once
+#include <fstream>
+#include <string>
+#include <vector>
+using namespace std;
 
-LexicalAnalyzer::LexicalAnalyzer()
+const int KEYWORDS_SIZE = 18;
+const string KEYWORDS[KEYWORDS_SIZE] = {"int", "float", "bool", "if", "else", "then", "endif", "while", "whileend",
+										"do", "doend", "for", "forend", "input", "output", "and", "or", "function" };
+
+const int OPERATORS_SIZE = 8;
+const char OPERATORS[OPERATORS_SIZE] = {'*', '+', '-', '=', '/', '>', '<', '%'};
+
+const int SEPARATORS_SIZE = 13;
+const char SEPARATORS[SEPARATORS_SIZE] = { '\'', '(', ')', '{', '}', '[', ']', ',', '.', ':', ';', '!', ' ' };
+
+
+
+class LexicalAnalyzer
 {
-	tokens.clear();
-	lexemes.clear();
-}
+public:
+	LexicalAnalyzer();
+	~LexicalAnalyzer();
 
-LexicalAnalyzer::~LexicalAnalyzer()
-{
-	tokens.clear();
-	lexemes.clear();
-}
+	void lexer(ifstream& sourceCode);
+	void printResult(string fName);
 
-void LexicalAnalyzer::lexer(ifstream& sourceCode) {
-	char c;
-	string buffer;
+	vector<string> getTokens();
+	vector<string> getLexemes();
 
-	while (sourceCode.get(c)) {
-		//if (c == '\n') continue;
+private:
+	vector<string> tokens;
+	vector<string> lexemes;
 
-		if (isOperator(c)) {
-			tokens.push_back("operator");
-			lexemes.push_back(string(1, c));
-		}
+	bool isKeyword(string str);
+	bool isOperator(char ch);
+	bool isSeparator(char ch);
+	void analyze(string word);
+};
 
-		if (isSeparator(c)) {
-			if (c != ' ') {
-				tokens.push_back("separator");
-				lexemes.push_back(string(1, c));
-			}
-		}
-
-		buffer += c;
-
-		cout << c;
-	}
-
-	cout << endl << "TOKENS \t\t LEXEMES" << endl;
-	for (int i = 0; i < tokens.size(); ++i) {
-		cout << tokens[i] << "\t" << lexemes[i] << endl;
-	}
-}
-
-vector<string> LexicalAnalyzer::getTokens() {
-	return tokens;
-}
-
-vector<string> LexicalAnalyzer::getLexemes() {
-	return lexemes;
-}
-
-void LexicalAnalyzer::printResult(string fName) {
-	ofstream writer(fName);
-	writer << "TOKENS \t\t LEXEMES" << endl;
-	for (int i = 0; i < tokens.size(); ++i) {
-		writer << tokens[i] << "\t" << lexemes[i] << endl;
-	}
-	writer.close();
-}
-
-bool LexicalAnalyzer::isKeyword(string str) {
-	for (int i = 0; i < KEYWORDS_SIZE; ++i) 
-		if (str == KEYWORDS[i]) return true;
-
-	return false;
-}
-
-bool LexicalAnalyzer::isOperator(char ch) {
-	for (int i = 0; i < OPERATORS_SIZE; ++i)
-		if (ch == OPERATORS[i]) return true;
-
-	return false;
-}
-
-bool LexicalAnalyzer::isSeparator(char ch) {
-	for (int i = 0; i < SEPARATORS_SIZE; ++i)
-		if (ch == SEPARATORS[i]) return true;
-
-	return false;
-}
