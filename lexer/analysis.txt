@@ -1,0 +1,14 @@
+     TOKENS	LEXEMES
+    keyword	int
+ identifier	a
+   operator	=
+   operator	-
+        int	1
+  separator	;
+ identifier	print
+  separator	(
+ identifier	a
+   operator	*
+       real	5.1
+  separator	)
+  separator	;
