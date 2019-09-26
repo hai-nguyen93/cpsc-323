@@ -32,10 +32,11 @@ const char SEPARATORS[SEPARATORS_SIZE] = { '\'', '(', ')', '{', '}', '[', ']', '
 			7: add the '.' to the lists, reset FSM and analyze the rest of the string
 			8: add the undefined string and '.' to the lists, reset the FSM and analyze the rest of the string
 			9: add the real number and '.' to the lists, reset the FSM and analyze the rest of the string	
-	F = {1, 2, 3, 4} 
+	F = {1, 2, 3, 4, 5} 
 */
 const int FSM[6][4] = {
  //N:	 l  d  $  . 
+//       0  1  2  3
 /*0*/	{1, 2, 5, 4},
 /*1*/	{1, 1, 1, 6},
 /*2*/	{5, 2, 5, 3},
@@ -68,5 +69,6 @@ private:
 	bool isOperator(char ch);
 	bool isSeparator(char ch);
 	void analyze(string word); // analyze a string using the FSM above
+	int charToCol(char ch);
 };
 

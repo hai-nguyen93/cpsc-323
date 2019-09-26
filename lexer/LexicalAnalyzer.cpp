@@ -125,23 +125,15 @@ void LexicalAnalyzer::analyze(string word) {
 
 	// Traversing the FSM
 	int state = 0;
+	int col;
 	string buffer;
 	for (int i = 0; i < word.length(); ++i) {
 		buffer += word[i];
-		if (isLetter(word[i])) {
-			state = FSM[state][0];
-		}
-		if (isDigit(word[i])) {
-			state = FSM[state][1];
-		}
-		if (word[i] == '$') {
-			state = FSM[state][2];
-		}
-		if (word[i] == '.') {
-			state = FSM[state][3];
-		}
+		col = charToCol(word[i]);
+		if (col != -1) // traverse the FSM if char is valid, skip the current char if invalid
+			state = FSM[state][col];
 
-		// handling special states
+		// handling special states (seperator '.')
 		if (state == 6) { 			
 			tokens.push_back("identifier");
 			lexemes.push_back(string(buffer, 0, buffer.length()-1));
@@ -205,4 +197,20 @@ void LexicalAnalyzer::analyze(string word) {
 		default:
 			break;
 	}
+}
+
+int LexicalAnalyzer::charToCol(char ch) {
+	if (isLetter(ch)) {
+		return 0;
+	}
+	if (isDigit(ch)) {
+		return 1;
+	}
+	if (ch == '$') {
+		return 2;
+	}
+	if (ch == '.') {
+		return 3;
+	}
+	return -1; // invalid char
 }
