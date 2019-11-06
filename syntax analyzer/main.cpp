@@ -45,6 +45,7 @@ void testLine() {
 	string test;
 	cout << "Enter 1 line of code: " << endl;
 	getline(cin, test);
+	if (test.size() <= 0) return;
 	LexicalAnalyzer la;
 	la.lexer(test);
 	la.printResult("analysis.txt");

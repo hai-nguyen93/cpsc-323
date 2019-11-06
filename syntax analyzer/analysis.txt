@@ -1,23 +1,5 @@
      TOKENS	LEXEMES	LINE
  identifier	a	1
-   operator	=	1
-  separator	(	1
+   operator	+	1
  identifier	b	1
-   operator	+	1
-        int	2	1
-  separator	)	1
-   operator	*	1
-  separator	(	1
-        int	3	1
-   operator	-	1
-        int	4	1
-  separator	)	1
-   operator	/	1
- identifier	s	1
-   operator	+	1
-  separator	(	1
- identifier	f	1
-   operator	-	1
- identifier	g	1
-  separator	)	1
   separator	;	1

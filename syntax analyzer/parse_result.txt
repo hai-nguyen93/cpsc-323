@@ -1,84 +1,18 @@
 -Token: identifier	-Lexeme: a
-	<Statement> -> <Compound> | <Expression-statement> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While>
--Token: operator	-Lexeme: =
-	<Assign> -> identifier = <Expression>;
--Token: separator	-Lexeme: (
+	<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <Return> | <While>
+	<Expression Statement> -> <Expression>;
 	<Expression> -> <Term> <ExpressionPrime>
 	<Term> -> <Factor> <TermPrime>
 	<Factor> -> - <Primary> | <Primary>
 	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
+-Token: operator	-Lexeme: +
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
 -Token: identifier	-Lexeme: b
-	<Expression> -> <Term> <ExpressionPrime>
 	<Term> -> <Factor> <TermPrime>
 	<Factor> -> - <Primary> | <Primary>
 	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
--Token: operator	-Lexeme: +
-	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
-	<Empty> -> epsilon
-	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
--Token: int	-Lexeme: 2
-	<Term> -> <Factor> <TermPrime>
-	<Factor> -> - <Primary> | <Primary>
-	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
--Token: separator	-Lexeme: )
-	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
-	<Empty> -> epsilon
-	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
-	<Empty> -> epsilon
--Token: operator	-Lexeme: *
-	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
--Token: separator	-Lexeme: (
-	<Factor> -> - <Primary> | <Primary>
-	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
--Token: int	-Lexeme: 3
-	<Expression> -> <Term> <ExpressionPrime>
-	<Term> -> <Factor> <TermPrime>
-	<Factor> -> - <Primary> | <Primary>
-	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
--Token: operator	-Lexeme: -
-	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
-	<Empty> -> epsilon
-	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
--Token: int	-Lexeme: 4
-	<Term> -> <Factor> <TermPrime>
-	<Factor> -> - <Primary> | <Primary>
-	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
--Token: separator	-Lexeme: )
-	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
-	<Empty> -> epsilon
-	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
-	<Empty> -> epsilon
--Token: operator	-Lexeme: /
-	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
--Token: identifier	-Lexeme: s
-	<Factor> -> - <Primary> | <Primary>
-	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
--Token: operator	-Lexeme: +
-	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
-	<Empty> -> epsilon
-	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
--Token: separator	-Lexeme: (
-	<Term> -> <Factor> <TermPrime>
-	<Factor> -> - <Primary> | <Primary>
-	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
--Token: identifier	-Lexeme: f
-	<Expression> -> <Term> <ExpressionPrime>
-	<Term> -> <Factor> <TermPrime>
-	<Factor> -> - <Primary> | <Primary>
-	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
--Token: operator	-Lexeme: -
-	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
-	<Empty> -> epsilon
-	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
--Token: identifier	-Lexeme: g
-	<Term> -> <Factor> <TermPrime>
-	<Factor> -> - <Primary> | <Primary>
-	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
--Token: separator	-Lexeme: )
-	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
-	<Empty> -> epsilon
-	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
-	<Empty> -> epsilon
 -Token: separator	-Lexeme: ;
 	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
 	<Empty> -> epsilon

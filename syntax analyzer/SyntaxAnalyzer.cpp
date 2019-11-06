@@ -24,42 +24,13 @@ void SyntaxAnalyzer::analyze(const vector<string>& tokens, const vector<string>&
 
 	do {
 		cout << "-Token: " << tokens[i] << "\t-Lexeme: " << lexemes[i] << endl;
-		cout << "\t<Statement> -> <Compound> | <Expression-statement> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While>" << endl;
 		writer << "-Token: " << tokens[i] << "\t-Lexeme: " << lexemes[i] << endl;
-		writer << "\t<Statement> -> <Compound> | <Expression-statement> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While>" << endl;
 
-		if (tokens[i] == "identifier") { // assign or expression statement
-			if (!nextToken(tokens, lexemes, i, writer))  return;
-			if (assign(tokens, lexemes, line_number, i, writer)) {
-				//++i;
-				//continue;
-			}
-			else if (expressionStatement(tokens, lexemes, line_number, i, writer)) {
-				//++i;
-				//continue;
-			}
-			else {
-				cout << "Error: invalid statement - line " << line_number[i] << endl;
-				writer << "Error: invalid statement - line " << line_number[i] << endl;
-				writer.close();
-				return;
-			}
+		if (statement(tokens, lexemes, line_number, i, writer)) {
 		}
-
-		else if (tokens[i] == "int" || tokens[i] == "real") { // expression statement
-			if (expressionStatement(tokens, lexemes, line_number, i, writer)) {
-				//++i;
-				//continue;
-			}
-			else {
-				cout << "Error: invalid statement - line " << line_number[i] << endl;
-				writer << "Error: invalid statement - line " << line_number[i] << endl;
-				writer.close();
-				return;
-			}
+		else {
+			return;
 		}
-
-		// other statements
 		++i;
 		cout << endl;
 	} while (i < n);
@@ -85,31 +56,92 @@ bool SyntaxAnalyzer::nextToken(const vector<string>& tokens, const vector<string
 	return true;
 }
 
+bool SyntaxAnalyzer::statement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {	
+	cout << "\t<Statement> -> <Expression-statement> | <Assign> | <If> | <Decalre> | <Return> | <While>" << endl;
+	writer << "\t<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <Return> | <While>" << endl;
+
+	int startIndex = i;  // first token of a statement
+	if (tokens[i] == "identifier") { // assign or expression statement
+		if (i + 1 < tokens.size()) {
+			if (lexemes[i + 1] == "=") {  // assign
+				if (assign(tokens, lexemes, line_number, i, writer)) {
+					return true;
+				}
+			}
+			else { // expression statement
+				//i = startIndex;
+				if (expressionStatement(tokens, lexemes, line_number, i, writer)) {
+					return true;
+				}
+			}
+		}
+	}
+
+	else if (tokens[i] == "int" || tokens[i] == "real" || lexemes[i] == "(" || lexemes[i] == "-") { // expression statement
+		if (expressionStatement(tokens, lexemes, line_number, i, writer)) {
+			return true;
+		}		
+	}
+
+	else if (lexemes[i] == "int" || lexemes[i] == "float" || lexemes[i] == "bool") { // declare statement
+		if (declare(tokens, lexemes, line_number, i, writer)) {
+			return true;
+		}		
+	}
+
+	// other statement
+
+	//cout << "Error: invalid statement - line " << line_number[i] << endl;
+	//writer << "Error: invalid statement - line " << line_number[i] << endl;
+	writer.close();
+	return false;
+}
+
 bool SyntaxAnalyzer::assign(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
 	cout << "\t<Assign> -> identifier = <Expression>;" << endl;
 	writer << "\t<Assign> -> identifier = <Expression>;" << endl;
 
-	if (lexemes[i] == "=") {
-		if (!nextToken(tokens, lexemes, i, writer)) return false;
-		if (expression(tokens, lexemes, line_number, i, writer)) {
+	if (tokens[i] == "identifier") {
+		if (!nextToken(tokens, lexemes, i, writer))  return false;
+		if (lexemes[i] == "=") {
 			if (!nextToken(tokens, lexemes, i, writer)) return false;
-			if (lexemes[i] == ";") {
-				return true;
-			}
-			else {
-				cout << "Error: expect a \";\" - line " << line_number[i] << endl;
-				writer << "Error: expect a \";\" - line " << line_number[i] << endl;
-				return false;
+			if (expression(tokens, lexemes, line_number, i, writer)) {
+				if (!nextToken(tokens, lexemes, i, writer)) return false;
+				if (lexemes[i] == ";") {
+					return true;
+				}
+				else {
+					cout << "Error: expect a \";\" - line " << line_number[i] << endl;
+					writer << "Error: expect a \";\" - line " << line_number[i] << endl;
+					return false;
+				}
 			}
 		}
 	}
-	cout << "Error: invalid assignment statement - line " << line_number[i] << endl;
-	writer << "Error: invalid assignment statement - line " << line_number[i] << endl;
+
+	cout << "Error: invalid assign statement - line " << line_number[i] << endl;
+	writer << "Error: invalid assign statement - line " << line_number[i] << endl;
 	return false;
 }
 
 bool SyntaxAnalyzer::expressionStatement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer){
-	// TODO
+	cout << "\t<Expression Statement> -> <Expression>;" << endl;
+	writer << "\t<Expression Statement> -> <Expression>;" << endl;
+
+	if (expression(tokens, lexemes, line_number, i, writer)) {
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (lexemes[i] == ";") {
+			return true;
+		}
+		else {
+			cout << "Error: expect a \";\" - line " << line_number[i] << endl;
+			writer << "Error: expect a \";\" - line " << line_number[i] << endl;
+			return false;
+		}
+	}
+
+	cout << "Error: invalid expression statement - line " << line_number[i] << endl;
+	writer << "Error: invalid expression statement - line " << line_number[i] << endl;
 	return false;
 }
 
@@ -122,9 +154,7 @@ bool SyntaxAnalyzer::expression(const vector<string>& tokens, const vector<strin
 		if (expressionPrime(tokens, lexemes, line_number, i, writer)) {
 			return true;
 		}
-	}
-	cout << "Error: invalid expression - line " << line_number[i] << endl;
-	writer << "Error: invalid expression - line " << line_number[i] << endl;
+	}	
 	return false;
 }
 
@@ -147,8 +177,6 @@ bool SyntaxAnalyzer::expressionPrime(const vector<string>& tokens, const vector<
 		--i;
 		return true;
 	}
-	cout << "Error: invalid expression prime - line " << line_number[i] << endl;
-	writer << "Error: invalid expression prime - line " << line_number[i] << endl;
 	return false;
 }
 
@@ -163,8 +191,6 @@ bool SyntaxAnalyzer::term(const vector<string>& tokens, const vector<string>& le
 		}
 	}
 
-	cout << "Error: invalid term - line " << line_number[i] << endl;
-	writer << "Error: invalid term - line " << line_number[i] << endl;
 	return false;
 }
 
@@ -188,8 +214,6 @@ bool SyntaxAnalyzer::termPrime(const vector<string>& tokens, const vector<string
 		return true;
 	}
 
-	cout << "Error: invalid term prime - line: " << line_number[i] << endl;
-	writer << "Error: invalid term prime - line: " << line_number[i] << endl;
 	return false;
 }
 
@@ -197,23 +221,18 @@ bool SyntaxAnalyzer::factor(const vector<string>& tokens, const vector<string>& 
 	cout << "\t<Factor> -> - <Primary> | <Primary>" << endl;
 	writer << "\t<Factor> -> - <Primary> | <Primary>" << endl;
 
-	if (tokens[i] == "-") {
-		//cout << "\t<Factor> -> - <Primary>" << endl;
-		//writer << "\t<Factor> -> - <Primary>" << endl;
+	if (lexemes[i] == "-") {
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
 		if (primary(tokens, lexemes, line_number, i, writer)) {
 			return true;
 		}
 	}
 	else { 		
-		//cout << "\t<Factor> -> <Primary>" << endl;				
-		//writer << "\t<Factor> -> <Primary>" << endl;
 		if (primary(tokens, lexemes, line_number, i, writer)) {
 			return true;
 		}
 	}
-	cout << "Error: invalid factor - line: " << line_number[i] << endl;
-	writer << "Error: invalid factor - line: " << line_number[i] << endl;
+
 	return false;
 }
 
@@ -239,7 +258,54 @@ bool SyntaxAnalyzer::primary(const vector<string>& tokens, const vector<string>&
 		}
 	}
 
-	cout << "Error: invalid primary - line: " << line_number[i] << endl;
-	writer << "Error: invalid primary - line: " << line_number[i] << endl;
+	return false;
+}
+
+bool SyntaxAnalyzer::declare(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
+	cout << "\t<Decalre> -> <Type> identifier <MoreIDs>;" << endl;
+	writer << "\t<Decalre> -> <Type> identifier <MoreIDs>;" << endl;
+
+	if (lexemes[i] == "int" || lexemes[i] == "float" || lexemes[i] == "bool") { // <Type>
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (tokens[i] == "identifier") {
+			if (!nextToken(tokens, lexemes, i, writer)) return false;
+			if (moreIDs(tokens, lexemes, line_number, i, writer)) {
+				if (!nextToken(tokens, lexemes, i, writer)) return false;
+				if (lexemes[i] == ";") {
+					return true;
+				}
+				else {
+					cout << "Error: expect a \";\" - line " << line_number[i] << endl;
+					writer << "Error: expect a \";\" - line " << line_number[i] << endl;
+					return false;
+				}
+			}
+		}
+	}
+
+	cout << "Error: invalid declare statement - line " << line_number[i] << endl;
+	writer << "Error: invalid declare statement - line " << line_number[i] << endl;
+	return false;
+}
+
+bool SyntaxAnalyzer::moreIDs(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
+	cout << "\t<MoreIDs> -> , id <MoreIDs> | <Empty>" << endl;
+	writer << "\t<MoreIDs> -> , id <MoreIDs> | <Empty>" << endl;
+
+	if (lexemes[i] == ",") {
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (tokens[i] == "identifier") {
+			if (!nextToken(tokens, lexemes, i, writer)) return false;
+			if (moreIDs(tokens, lexemes, line_number, i, writer)) {
+				return true;
+			}
+		}
+	}
+	else { // epsilon
+		cout << "\t<Empty> -> epsilon" << endl;
+		writer << "\t<Empty> -> epsilon" << endl;
+		--i;
+		return true;
+	}
 	return false;
 }
