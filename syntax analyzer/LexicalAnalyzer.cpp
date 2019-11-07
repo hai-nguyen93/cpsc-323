@@ -70,6 +70,7 @@ void LexicalAnalyzer::lexer(ifstream& sourceCode) {
 	if (buffer.length() > 0)
 		analyze(buffer, line);
 
+	cout << endl;
 	/*cout << endl << endl << setw(11) << "TOKENS" << "\tLEXEMES" << endl;
 	for (int i = 0; i < tokens.size(); ++i) {
 		cout << setw(11) << tokens[i] << "\t" << lexemes[i] << endl;

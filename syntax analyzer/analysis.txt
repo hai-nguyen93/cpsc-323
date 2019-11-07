@@ -1,5 +1,11 @@
      TOKENS	LEXEMES	LINE
+    keyword	if	1
  identifier	a	1
    operator	+	1
  identifier	b	1
+    keyword	then	1
+ identifier	a	1
+   operator	=	1
+ identifier	b	1
   separator	;	1
+    keyword	endif	1

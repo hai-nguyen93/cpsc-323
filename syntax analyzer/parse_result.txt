@@ -1,10 +1,12 @@
--Token: identifier	-Lexeme: a
+-Token: keyword	-Lexeme: if
 	<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <Return> | <While>
-	<Expression Statement> -> <Expression>;
+	<If> -> if <Conditional> then <Statement> endif
+-Token: identifier	-Lexeme: a
+	<Conditional> -> <Expression> <ConditionalPrime>
 	<Expression> -> <Term> <ExpressionPrime>
 	<Term> -> <Factor> <TermPrime>
 	<Factor> -> - <Primary> | <Primary>
-	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
+	<Primary> -> identifier | int | ( <Expression> ) | real | true | false
 -Token: operator	-Lexeme: +
 	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
 	<Empty> -> epsilon
@@ -12,11 +14,30 @@
 -Token: identifier	-Lexeme: b
 	<Term> -> <Factor> <TermPrime>
 	<Factor> -> - <Primary> | <Primary>
-	<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false
+	<Primary> -> identifier | int | ( <Expression> ) | real | true | false
+-Token: keyword	-Lexeme: then
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
+	<Empty> -> epsilon
+	<ConditionalPrime> -> <Relop> <Expression> | <Empty>
+	<Relop> -> < | <= | == | <> | >= | >
+	<Empty> -> epsilon
+-Token: identifier	-Lexeme: a
+	<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <Return> | <While>
+	<Assign> -> identifier = <Expression>;
+-Token: operator	-Lexeme: =
+-Token: identifier	-Lexeme: b
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> identifier | int | ( <Expression> ) | real | true | false
 -Token: separator	-Lexeme: ;
 	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
 	<Empty> -> epsilon
 	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
 	<Empty> -> epsilon
+-Token: keyword	-Lexeme: endif
+
 
 Finished.

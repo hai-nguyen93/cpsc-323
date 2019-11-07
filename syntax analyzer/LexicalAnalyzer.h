@@ -8,8 +8,8 @@
 #include <vector>
 using namespace std;
 
-const int KEYWORDS_SIZE = 18;
-const string KEYWORDS[KEYWORDS_SIZE] = {"int", "float", "bool", "if", "else", "then", "endif", "while", "whileend",
+const int KEYWORDS_SIZE = 20;
+const string KEYWORDS[KEYWORDS_SIZE] = {"int", "float", "bool", "true", "false", "if", "else", "then", "endif", "while", "whileend",
 										"do", "doend", "for", "forend", "input", "output", "and", "or", "function" };
 
 const int OPERATORS_SIZE = 8;

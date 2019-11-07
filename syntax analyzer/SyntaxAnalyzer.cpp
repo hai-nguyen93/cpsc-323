@@ -33,6 +33,7 @@ void SyntaxAnalyzer::analyze(const vector<string>& tokens, const vector<string>&
 		}
 		++i;
 		cout << endl;
+		writer << endl;
 	} while (i < n);
 
 	cout << endl << "Finished." << endl;
@@ -89,7 +90,14 @@ bool SyntaxAnalyzer::statement(const vector<string>& tokens, const vector<string
 		}		
 	}
 
+	else if (lexemes[i] == "if") { // if statement
+		if (ifStatement(tokens, lexemes, line_number, i, writer)) {
+			return true;
+		}
+	}
+
 	// other statement
+
 
 	//cout << "Error: invalid statement - line " << line_number[i] << endl;
 	//writer << "Error: invalid statement - line " << line_number[i] << endl;
@@ -237,10 +245,10 @@ bool SyntaxAnalyzer::factor(const vector<string>& tokens, const vector<string>& 
 }
 
 bool SyntaxAnalyzer::primary(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false" << endl;
-	writer << "\t<Primary> -> identifier | int | identifier ( <IDs> ) | ( <Expression> ) | real | true | false" << endl;
+	cout << "\t<Primary> -> identifier | int | ( <Expression> ) | real | true | false" << endl;
+	writer << "\t<Primary> -> identifier | int | ( <Expression> ) | real | true | false" << endl;
 
-	if (tokens[i] == "identifier" || tokens[i] == "int" || tokens[i] == "real") {
+	if (tokens[i] == "identifier" || tokens[i] == "int" || tokens[i] == "real" || lexemes[i] == "true" || lexemes[i] == "false") {
 		return true;
 	}
 	if (lexemes[i] == "(") {
@@ -307,5 +315,96 @@ bool SyntaxAnalyzer::moreIDs(const vector<string>& tokens, const vector<string>&
 		--i;
 		return true;
 	}
+	return false;
+}
+
+bool SyntaxAnalyzer::conditional(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
+	cout << "\t<Conditional> -> <Expression> <ConditionalPrime> " << endl;
+	writer << "\t<Conditional> -> <Expression> <ConditionalPrime>" << endl;
+
+	if (expression(tokens, lexemes, line_number, i, writer)){
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (conditionalPrime(tokens, lexemes, line_number, i, writer)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool SyntaxAnalyzer::conditionalPrime(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
+	cout << "\t<ConditionalPrime> -> <Relop> <Expression> | <Empty>" << endl;
+	writer << "\t<ConditionalPrime> -> <Relop> <Expression> | <Empty>" << endl;
+
+	if (relop(tokens, lexemes, line_number, i, writer)) {
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (expression(tokens, lexemes, line_number, i, writer)) {
+			return true;
+		}
+	}
+	else{ // epsilon
+		cout << "\t<Empty> -> epsilon" << endl;
+		writer << "\t<Empty> -> epsilon" << endl;
+		--i;
+		return true;
+	}
+
+	return false;
+}
+
+bool SyntaxAnalyzer::relop(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
+	cout << "\t<Relop> -> < | <= | == | <> | >= | >" << endl;
+	writer << "\t<Relop> -> < | <= | == | <> | >= | >" << endl;
+
+	if (lexemes[i] == "<") { // < or <= or <>
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (lexemes[i] == "=") // <= 
+			return true;
+		else if (lexemes[i] == ">") // <>
+			return true;
+		else{ // <			
+			--i;
+			return true;
+		}	
+	}
+	if (lexemes[i] == "=") { // ==
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (lexemes[i] == "=")
+			return true;
+	}
+	if (lexemes[i] == ">") { // > or >=
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (lexemes[i] == "=") // >=
+			return true;
+		else{ // >
+			--i;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool SyntaxAnalyzer::ifStatement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
+	cout << "\t<If> -> if <Conditional> then <Statement> endif" << endl;
+	writer << "\t<If> -> if <Conditional> then <Statement> endif" << endl;
+
+	if (lexemes[i] == "if") {
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (conditional(tokens, lexemes, line_number, i, writer)) {
+			if (!nextToken(tokens, lexemes, i, writer)) return false;
+			if (lexemes[i] == "then") {
+				if (!nextToken(tokens, lexemes, i, writer)) return false;
+				if (statement(tokens, lexemes, line_number, i, writer)) {
+					if (!nextToken(tokens, lexemes, i, writer)) return false;
+					if (lexemes[i] == "endif") {
+						return true;
+					}
+				}
+			}
+		}
+	}
+
+	cout << "Error: invalid If block - line " << line_number[i] << endl;
+	writer << "Error: invalid If block - line " << line_number[i] << endl;
 	return false;
 }
