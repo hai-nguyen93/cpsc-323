@@ -29,6 +29,7 @@ void SyntaxAnalyzer::analyze(const vector<string>& tokens, const vector<string>&
 		if (statement(tokens, lexemes, line_number, i, writer)) {
 		}
 		else {
+			writer.close();
 			return;
 		}
 		++i;
@@ -44,8 +45,8 @@ void SyntaxAnalyzer::analyze(const vector<string>& tokens, const vector<string>&
 bool SyntaxAnalyzer::nextToken(const vector<string>& tokens, const vector<string>& lexemes, int& i, ofstream& writer) {
 	++i;
 	if (i >= tokens.size()) {
-		cout << "End of token stream." << endl;
-		writer << "End of token stream." << endl;
+		cout << "Error: end of token stream." << endl;
+		writer << "Error: end of token stream." << endl;
 		--i;
 		return false;
 	}
@@ -99,9 +100,11 @@ bool SyntaxAnalyzer::statement(const vector<string>& tokens, const vector<string
 	// other statement
 
 
-	//cout << "Error: invalid statement - line " << line_number[i] << endl;
-	//writer << "Error: invalid statement - line " << line_number[i] << endl;
-	writer.close();
+	else {
+		cout << "Error: invalid statement - line " << line_number[i] << endl;
+		writer << "Error: invalid statement - line " << line_number[i] << endl;
+	}
+	//writer.close();
 	return false;
 }
 
@@ -119,8 +122,8 @@ bool SyntaxAnalyzer::assign(const vector<string>& tokens, const vector<string>& 
 					return true;
 				}
 				else {
-					cout << "Error: expect a \";\" - line " << line_number[i] << endl;
-					writer << "Error: expect a \";\" - line " << line_number[i] << endl;
+					cout << "Error: missing a \";\" - line " << line_number[i] << endl;
+					writer << "Error: missing a \";\" - line " << line_number[i] << endl;
 					return false;
 				}
 			}
@@ -142,8 +145,8 @@ bool SyntaxAnalyzer::expressionStatement(const vector<string>& tokens, const vec
 			return true;
 		}
 		else {
-			cout << "Error: expect a \";\" - line " << line_number[i] << endl;
-			writer << "Error: expect a \";\" - line " << line_number[i] << endl;
+			cout << "Error: missing a \";\" - line " << line_number[i] << endl;
+			writer << "Error: missing a \";\" - line " << line_number[i] << endl;
 			return false;
 		}
 	}
@@ -259,8 +262,8 @@ bool SyntaxAnalyzer::primary(const vector<string>& tokens, const vector<string>&
 				return true;
 			}
 			else {
-				cout << "Error: expect a \")\" - line: " << line_number[i] << endl;
-				writer << "Error: expect a \")\" - line: " << line_number[i] << endl;
+				cout << "Error: missing a \")\" - line: " << line_number[i] << endl;
+				writer << "Error: missing a \")\" - line: " << line_number[i] << endl;
 				return false;
 			}
 		}
@@ -272,6 +275,8 @@ bool SyntaxAnalyzer::primary(const vector<string>& tokens, const vector<string>&
 bool SyntaxAnalyzer::declare(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
 	cout << "\t<Decalre> -> <Type> identifier <MoreIDs>;" << endl;
 	writer << "\t<Decalre> -> <Type> identifier <MoreIDs>;" << endl;
+	cout << "\t<Type> -> int | float | bool" << endl;
+	writer << "<Type> -> int | float | bool" << endl;
 
 	if (lexemes[i] == "int" || lexemes[i] == "float" || lexemes[i] == "bool") { // <Type>
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
@@ -283,8 +288,8 @@ bool SyntaxAnalyzer::declare(const vector<string>& tokens, const vector<string>&
 					return true;
 				}
 				else {
-					cout << "Error: expect a \";\" - line " << line_number[i] << endl;
-					writer << "Error: expect a \";\" - line " << line_number[i] << endl;
+					cout << "Error: missing a \";\" - line " << line_number[i] << endl;
+					writer << "Error: missing a \";\" - line " << line_number[i] << endl;
 					return false;
 				}
 			}
@@ -381,12 +386,14 @@ bool SyntaxAnalyzer::relop(const vector<string>& tokens, const vector<string>& l
 		}
 	}
 
+	cout << "Error: invalid relational operator - line " << line_number[i] << endl;
+	writer << "Error: invalid relational operator - line " << line_number[i] << endl;
 	return false;
 }
 
 bool SyntaxAnalyzer::ifStatement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<If> -> if <Conditional> then <Statement> endif" << endl;
-	writer << "\t<If> -> if <Conditional> then <Statement> endif" << endl;
+	cout << "\t<If> -> if <Conditional> then <StatementBlock> <ElseBlock> endif" << endl;
+	writer << "\t<If> -> if <Conditional> then <StatementBlock> <ElseBlock> endif" << endl;
 
 	if (lexemes[i] == "if") {
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
@@ -394,17 +401,95 @@ bool SyntaxAnalyzer::ifStatement(const vector<string>& tokens, const vector<stri
 			if (!nextToken(tokens, lexemes, i, writer)) return false;
 			if (lexemes[i] == "then") {
 				if (!nextToken(tokens, lexemes, i, writer)) return false;
-				if (statement(tokens, lexemes, line_number, i, writer)) {
+				if (statementBlock(tokens, lexemes, line_number, i, writer)) {
 					if (!nextToken(tokens, lexemes, i, writer)) return false;
-					if (lexemes[i] == "endif") {
-						return true;
+					if (elseBlock(tokens, lexemes, line_number, i, writer)) {
+						if (!nextToken(tokens, lexemes, i, writer)) {
+							cout << "Error: missing \"endif\" - line " << line_number[i] << endl;
+							writer << "Error: missing \"endif\" - line " << line_number[i] << endl;
+							return false;
+						}
+						if (lexemes[i] == "endif") {
+							return true;
+						}
+						else {
+							cout << "Error: missing \"endif\" - line " << line_number[i] << endl;
+							writer << "Error: missing \"endif\" - line " << line_number[i] << endl;
+							return false;
+						}
 					}
 				}
+			}
+			else {
+				cout << "Error: missing \"then\" - line " << line_number[i] << endl;
+				writer << "Error: missing \"then\" - line " << line_number[i] << endl;
+				return false;
 			}
 		}
 	}
 
 	cout << "Error: invalid If block - line " << line_number[i] << endl;
 	writer << "Error: invalid If block - line " << line_number[i] << endl;
+	return false;
+}
+
+bool SyntaxAnalyzer::statementBlock(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
+	cout << "\t<StatementBlock> -> { <Statement> <moreStatement>" << endl;
+	writer << "\t<StatementBlock> -> { <Statement> <moreStatement>" << endl;
+
+	if (lexemes[i] == "{") {
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (statement(tokens, lexemes, line_number, i, writer)) {
+			if (!nextToken(tokens, lexemes, i, writer)) return false;
+			if (moreStatement(tokens, lexemes, line_number, i, writer)) {
+				return true;
+			}
+		}
+	}
+
+	cout << "Error: invalid { statement block } - line " << line_number[i] << endl;
+	writer << "Error: invalid { statement block } - line " << line_number[i] << endl;
+	return false;
+}
+
+bool SyntaxAnalyzer::moreStatement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
+	cout << "\t<moreStatement> -> <Statement> <moreStatement> | }" << endl;
+	writer << "\t<moreStatement> -> <Statement> <moreStatement> | }" << endl;
+
+	if (lexemes[i] == "}") {
+		return true;
+	}
+	else {
+		if (statement(tokens, lexemes, line_number, i, writer)) {
+			if (!nextToken(tokens, lexemes, i, writer)) return false;
+			if (moreStatement(tokens, lexemes, line_number, i, writer)) {
+				return true;
+			}
+		}
+		else return false;
+	}
+
+	cout << "Error: missing a \"}\" - line " << line_number[i] << endl;
+	writer << "Error: missing a \"}\" - line " << line_number[i] << endl;
+	return false;
+}
+
+bool SyntaxAnalyzer::elseBlock(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
+	cout << "\t<ElseBlock> -> else <StatementBlock> | <Empty>" << endl;
+	writer << "\t<ElseBlock> -> else <StatementBlock> | <Empty>" << endl;
+
+	if (lexemes[i] == "else") {
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (statementBlock(tokens, lexemes, line_number, i, writer)) {
+			return true;
+		}
+	}
+	else { // epsilon
+		cout << "\t<Empty> -> epsilon" << endl;
+		writer << "\t<Empty> -> epsilon" << endl;
+		--i;
+		return true;
+	}
+
 	return false;
 }

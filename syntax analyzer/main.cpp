@@ -2,6 +2,21 @@
 // CPSC 323
 // Assignment 2
 // Syntax analysis
+// This program reads a source code file or 1 line of code and analyze the syntax (predictive RDP).
+// The result is printed to the screen and "parse_result.txt" file
+
+// Progress: this program can parse:
+// - Arithmetic assignment statement: a= b+c;
+// - Arithmetic expression statement: 1 * a;
+// - Declare statement: int a, b;
+// - If statement:
+//		if a > b then {
+//			a = b;
+//		} else {
+//			a = 1;
+//			b = 2;
+//		} endif
+
 
 #include <iostream>
 #include <fstream>
