@@ -6,16 +6,11 @@
 // The result is printed to the screen and "parse_result.txt" file
 
 // Progress: this program can parse:
-// - Arithmetic assignment statement: a= b+c;
-// - Arithmetic expression statement: 1 * a;
-// - Declare statement: int a, b;
-// - If statement:
-//		if a > b then {
-//			a = b;
-//		} else {
-//			a = 1;
-//			b = 2;
-//		} endif
+// - Arithmetic assignment statement
+// - Arithmetic expression statement
+// - Declare statement
+// - If statement
+// - While statement		
 
 
 #include <iostream>

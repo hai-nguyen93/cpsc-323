@@ -97,6 +97,11 @@ bool SyntaxAnalyzer::statement(const vector<string>& tokens, const vector<string
 		}
 	}
 
+	else if (lexemes[i] == "while"){ // while statemet
+		if (whileStatement(tokens, lexemes, line_number, i, writer)) {
+			return true;
+		}
+	}
 	// other statement
 
 
@@ -491,5 +496,44 @@ bool SyntaxAnalyzer::elseBlock(const vector<string>& tokens, const vector<string
 		return true;
 	}
 
+	return false;
+}
+
+bool SyntaxAnalyzer::whileStatement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
+	cout << "\t<While> -> while <Conditional> do <StatementBlock> whileend" << endl;
+	writer << "\t<While> -> while <Conditional> do <StatementBlock> whileend" << endl;
+
+	if (lexemes[i] == "while") {
+		if (!nextToken(tokens, lexemes, i, writer)) return false;
+		if (conditional(tokens, lexemes, line_number, i, writer)) {
+			if (!nextToken(tokens, lexemes, i, writer)) return false;
+			if (lexemes[i] == "do") {
+				if (!nextToken(tokens, lexemes, i, writer)) return false;
+				if (statementBlock(tokens, lexemes, line_number, i, writer)) {
+					if (!nextToken(tokens, lexemes, i, writer)) {
+						cout << "Error: missing \"whileend\" - line " << line_number[i] << endl;
+						writer << "Error: missing whileend - line " << line_number[i] << endl;
+						return false;
+					}
+					if (lexemes[i] == "whileend") {
+						return true;
+					}
+					else {
+						cout << "Error: missing \"whileend\" - line " << line_number[i] << endl;
+						writer << "Error: missing \"whileend\" - line " << line_number[i] << endl;
+						return false;
+					}
+				}
+			}
+			else {
+				cout << "Error: missing do block - line " << line_number[i] << endl;
+				writer << "Error: missing do block - line " << line_number[i] << endl;
+				return false;
+			}
+		}
+	}
+
+	cout << "Error: invalid While block - line " << line_number[i] << endl;
+	writer << "Error: invalid While block - line " << line_number[i] << endl;
 	return false;
 }
