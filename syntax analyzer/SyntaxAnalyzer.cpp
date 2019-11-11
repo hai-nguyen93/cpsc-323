@@ -59,8 +59,8 @@ bool SyntaxAnalyzer::nextToken(const vector<string>& tokens, const vector<string
 }
 
 bool SyntaxAnalyzer::statement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {	
-	cout << "\t<Statement> -> <Expression-statement> | <Assign> | <If> | <Decalre> | <Return> | <While>" << endl;
-	writer << "\t<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <Return> | <While>" << endl;
+	cout << "\t<Statement> -> <Expression-statement> | <Assign> | <If> | <Decalre> | <While>" << endl;
+	writer << "\t<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <While>" << endl;
 
 	int startIndex = i;  // first token of a statement
 	if (tokens[i] == "identifier") { // assign or expression statement
@@ -76,6 +76,11 @@ bool SyntaxAnalyzer::statement(const vector<string>& tokens, const vector<string
 					return true;
 				}
 			}
+		}
+		else {
+			cout << "Error: end of token stream." << endl;
+			writer << "Error: end of token stream." << endl;
+			return false;
 		}
 	}
 
