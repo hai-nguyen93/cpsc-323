@@ -23,7 +23,7 @@ void SyntaxAnalyzer::analyze(const vector<string>& tokens, const vector<string>&
 	int i = 0;
 
 	do {
-		cout << "-Token: " << tokens[i] << "\t-Lexeme: " << lexemes[i] << endl;
+		//cout << "-Token: " << tokens[i] << "\t-Lexeme: " << lexemes[i] << endl;
 		writer << "-Token: " << tokens[i] << "\t-Lexeme: " << lexemes[i] << endl;
 
 		if (statement(tokens, lexemes, line_number, i, writer)) {
@@ -33,13 +33,15 @@ void SyntaxAnalyzer::analyze(const vector<string>& tokens, const vector<string>&
 			return;
 		}
 		++i;
-		cout << endl;
+		//cout << endl;
 		writer << endl;
 	} while (i < n);
 
 	cout << endl << "Finished." << endl;
 	writer << endl << "Finished." << endl;
 	writer.close();
+
+	cg.printSymbolTable();
 }
 
 bool SyntaxAnalyzer::nextToken(const vector<string>& tokens, const vector<string>& lexemes, int& i, ofstream& writer) {
@@ -51,7 +53,7 @@ bool SyntaxAnalyzer::nextToken(const vector<string>& tokens, const vector<string
 		return false;
 	}
 	if (i > prev_i) {
-		cout << "-Token: " << tokens[i] << "\t-Lexeme: " << lexemes[i] << endl;
+		//cout << "-Token: " << tokens[i] << "\t-Lexeme: " << lexemes[i] << endl;
 		writer << "-Token: " << tokens[i] << "\t-Lexeme: " << lexemes[i] << endl;
 		prev_i = i;
 	}
@@ -59,7 +61,7 @@ bool SyntaxAnalyzer::nextToken(const vector<string>& tokens, const vector<string
 }
 
 bool SyntaxAnalyzer::statement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {	
-	cout << "\t<Statement> -> <Expression-statement> | <Assign> | <If> | <Decalre> | <While>" << endl;
+	//cout << "\t<Statement> -> <Expression-statement> | <Assign> | <If> | <Decalre> | <While>" << endl;
 	writer << "\t<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <While>" << endl;
 
 	int startIndex = i;  // first token of a statement
@@ -119,7 +121,7 @@ bool SyntaxAnalyzer::statement(const vector<string>& tokens, const vector<string
 }
 
 bool SyntaxAnalyzer::assign(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<Assign> -> identifier = <Expression>;" << endl;
+	//cout << "\t<Assign> -> identifier = <Expression>;" << endl;
 	writer << "\t<Assign> -> identifier = <Expression>;" << endl;
 
 	if (tokens[i] == "identifier") {
@@ -146,7 +148,7 @@ bool SyntaxAnalyzer::assign(const vector<string>& tokens, const vector<string>& 
 }
 
 bool SyntaxAnalyzer::expressionStatement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer){
-	cout << "\t<Expression Statement> -> <Expression>;" << endl;
+	//cout << "\t<Expression Statement> -> <Expression>;" << endl;
 	writer << "\t<Expression Statement> -> <Expression>;" << endl;
 
 	if (expression(tokens, lexemes, line_number, i, writer)) {
@@ -167,7 +169,7 @@ bool SyntaxAnalyzer::expressionStatement(const vector<string>& tokens, const vec
 }
 
 bool SyntaxAnalyzer::expression(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<Expression> -> <Term> <ExpressionPrime>" << endl;
+	//cout << "\t<Expression> -> <Term> <ExpressionPrime>" << endl;
 	writer << "\t<Expression> -> <Term> <ExpressionPrime>" << endl;
 
 	if (term(tokens, lexemes, line_number, i, writer)) {
@@ -180,7 +182,7 @@ bool SyntaxAnalyzer::expression(const vector<string>& tokens, const vector<strin
 }
 
 bool SyntaxAnalyzer::expressionPrime(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>" << endl;
+	//cout << "\t<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>" << endl;
 	writer << "\t<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>" << endl;
 
 	if (lexemes[i] == "+" || lexemes[i] == "-") {
@@ -193,7 +195,7 @@ bool SyntaxAnalyzer::expressionPrime(const vector<string>& tokens, const vector<
 		}
 	}
 	else { //epsilon
-		cout << "\t<Empty> -> epsilon" << endl;
+		//cout << "\t<Empty> -> epsilon" << endl;
 		writer << "\t<Empty> -> epsilon" << endl;
 		--i;
 		return true;
@@ -202,7 +204,7 @@ bool SyntaxAnalyzer::expressionPrime(const vector<string>& tokens, const vector<
 }
 
 bool SyntaxAnalyzer::term(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<Term> -> <Factor> <TermPrime>" << endl;
+	//cout << "\t<Term> -> <Factor> <TermPrime>" << endl;
 	writer << "\t<Term> -> <Factor> <TermPrime>" << endl;
 
 	if (factor(tokens, lexemes, line_number, i, writer)) {
@@ -216,7 +218,7 @@ bool SyntaxAnalyzer::term(const vector<string>& tokens, const vector<string>& le
 }
 
 bool SyntaxAnalyzer::termPrime(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>" << endl;
+	//cout << "\t<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>" << endl;
 	writer << "\t<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>" << endl;
 
 	if (lexemes[i] == "*" || lexemes[i] == "/") {
@@ -229,7 +231,7 @@ bool SyntaxAnalyzer::termPrime(const vector<string>& tokens, const vector<string
 		}
 	}
 	else { //epsilon
-		cout << "\t<Empty> -> epsilon" << endl;
+		//cout << "\t<Empty> -> epsilon" << endl;
 		writer << "\t<Empty> -> epsilon" << endl;
 		--i;
 		return true;
@@ -239,7 +241,7 @@ bool SyntaxAnalyzer::termPrime(const vector<string>& tokens, const vector<string
 }
 
 bool SyntaxAnalyzer::factor(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<Factor> -> - <Primary> | <Primary>" << endl;
+	//cout << "\t<Factor> -> - <Primary> | <Primary>" << endl;
 	writer << "\t<Factor> -> - <Primary> | <Primary>" << endl;
 
 	if (lexemes[i] == "-") {
@@ -258,7 +260,7 @@ bool SyntaxAnalyzer::factor(const vector<string>& tokens, const vector<string>& 
 }
 
 bool SyntaxAnalyzer::primary(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<Primary> -> identifier | int | ( <Expression> ) | real | true | false" << endl;
+	//cout << "\t<Primary> -> identifier | int | ( <Expression> ) | real | true | false" << endl;
 	writer << "\t<Primary> -> identifier | int | ( <Expression> ) | real | true | false" << endl;
 
 	if (tokens[i] == "identifier" || tokens[i] == "int" || tokens[i] == "real" || lexemes[i] == "true" || lexemes[i] == "false") {
@@ -283,14 +285,21 @@ bool SyntaxAnalyzer::primary(const vector<string>& tokens, const vector<string>&
 }
 
 bool SyntaxAnalyzer::declare(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<Decalre> -> <Type> identifier <MoreIDs>;" << endl;
+	//cout << "\t<Decalre> -> <Type> identifier <MoreIDs>;" << endl;
 	writer << "\t<Decalre> -> <Type> identifier <MoreIDs>;" << endl;
-	cout << "\t<Type> -> int | float | bool" << endl;
+	//cout << "\t<Type> -> int | float | bool" << endl;
 	writer << "<Type> -> int | float | bool" << endl;
 
 	if (lexemes[i] == "int" || lexemes[i] == "float" || lexemes[i] == "bool") { // <Type>
+		cg.typeToAdd = lexemes[i];
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
 		if (tokens[i] == "identifier") {
+			string id = lexemes[i];
+			if (!cg.addSymbol(id, cg.typeToAdd)) {
+				cout << "Error: " << lexemes[i] << " variable is already declared - line " << line_number[i] << endl;
+				return false;
+			}
+
 			if (!nextToken(tokens, lexemes, i, writer)) return false;
 			if (moreIDs(tokens, lexemes, line_number, i, writer)) {
 				if (!nextToken(tokens, lexemes, i, writer)) return false;
@@ -312,12 +321,18 @@ bool SyntaxAnalyzer::declare(const vector<string>& tokens, const vector<string>&
 }
 
 bool SyntaxAnalyzer::moreIDs(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<MoreIDs> -> , id <MoreIDs> | <Empty>" << endl;
+	//cout << "\t<MoreIDs> -> , id <MoreIDs> | <Empty>" << endl;
 	writer << "\t<MoreIDs> -> , id <MoreIDs> | <Empty>" << endl;
 
 	if (lexemes[i] == ",") {
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
 		if (tokens[i] == "identifier") {
+			string id = lexemes[i];
+			if (!cg.addSymbol(id, cg.typeToAdd)) {
+				cout << "Error: " << lexemes[i] << " variable is already declared - line" << line_number[i] << endl;
+				return false;
+			}
+
 			if (!nextToken(tokens, lexemes, i, writer)) return false;
 			if (moreIDs(tokens, lexemes, line_number, i, writer)) {
 				return true;
@@ -325,7 +340,7 @@ bool SyntaxAnalyzer::moreIDs(const vector<string>& tokens, const vector<string>&
 		}
 	}
 	else { // epsilon
-		cout << "\t<Empty> -> epsilon" << endl;
+		//cout << "\t<Empty> -> epsilon" << endl;
 		writer << "\t<Empty> -> epsilon" << endl;
 		--i;
 		return true;
@@ -334,7 +349,7 @@ bool SyntaxAnalyzer::moreIDs(const vector<string>& tokens, const vector<string>&
 }
 
 bool SyntaxAnalyzer::conditional(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<Conditional> -> <Expression> <ConditionalPrime> " << endl;
+	//cout << "\t<Conditional> -> <Expression> <ConditionalPrime> " << endl;
 	writer << "\t<Conditional> -> <Expression> <ConditionalPrime>" << endl;
 
 	if (expression(tokens, lexemes, line_number, i, writer)){
@@ -347,7 +362,7 @@ bool SyntaxAnalyzer::conditional(const vector<string>& tokens, const vector<stri
 }
 
 bool SyntaxAnalyzer::conditionalPrime(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<ConditionalPrime> -> <Relop> <Expression> | <Empty>" << endl;
+	//cout << "\t<ConditionalPrime> -> <Relop> <Expression> | <Empty>" << endl;
 	writer << "\t<ConditionalPrime> -> <Relop> <Expression> | <Empty>" << endl;
 
 	if (relop(tokens, lexemes, line_number, i, writer)) {
@@ -357,7 +372,7 @@ bool SyntaxAnalyzer::conditionalPrime(const vector<string>& tokens, const vector
 		}
 	}
 	else{ // epsilon
-		cout << "\t<Empty> -> epsilon" << endl;
+		//cout << "\t<Empty> -> epsilon" << endl;
 		writer << "\t<Empty> -> epsilon" << endl;
 		--i;
 		return true;
@@ -367,7 +382,7 @@ bool SyntaxAnalyzer::conditionalPrime(const vector<string>& tokens, const vector
 }
 
 bool SyntaxAnalyzer::relop(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<Relop> -> < | <= | == | <> | >= | >" << endl;
+	//cout << "\t<Relop> -> < | <= | == | <> | >= | >" << endl;
 	writer << "\t<Relop> -> < | <= | == | <> | >= | >" << endl;
 
 	if (lexemes[i] == "<") { // < or <= or <>
@@ -402,7 +417,7 @@ bool SyntaxAnalyzer::relop(const vector<string>& tokens, const vector<string>& l
 }
 
 bool SyntaxAnalyzer::ifStatement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<If> -> if <Conditional> then <StatementBlock> <ElseBlock> endif" << endl;
+	//cout << "\t<If> -> if <Conditional> then <StatementBlock> <ElseBlock> endif" << endl;
 	writer << "\t<If> -> if <Conditional> then <StatementBlock> <ElseBlock> endif" << endl;
 
 	if (lexemes[i] == "if") {
@@ -444,7 +459,7 @@ bool SyntaxAnalyzer::ifStatement(const vector<string>& tokens, const vector<stri
 }
 
 bool SyntaxAnalyzer::statementBlock(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<StatementBlock> -> { <Statement> <moreStatement>" << endl;
+	//cout << "\t<StatementBlock> -> { <Statement> <moreStatement>" << endl;
 	writer << "\t<StatementBlock> -> { <Statement> <moreStatement>" << endl;
 
 	if (lexemes[i] == "{") {
@@ -463,7 +478,7 @@ bool SyntaxAnalyzer::statementBlock(const vector<string>& tokens, const vector<s
 }
 
 bool SyntaxAnalyzer::moreStatement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<moreStatement> -> <Statement> <moreStatement> | }" << endl;
+	//cout << "\t<moreStatement> -> <Statement> <moreStatement> | }" << endl;
 	writer << "\t<moreStatement> -> <Statement> <moreStatement> | }" << endl;
 
 	if (lexemes[i] == "}") {
@@ -485,7 +500,7 @@ bool SyntaxAnalyzer::moreStatement(const vector<string>& tokens, const vector<st
 }
 
 bool SyntaxAnalyzer::elseBlock(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<ElseBlock> -> else <StatementBlock> | <Empty>" << endl;
+	//cout << "\t<ElseBlock> -> else <StatementBlock> | <Empty>" << endl;
 	writer << "\t<ElseBlock> -> else <StatementBlock> | <Empty>" << endl;
 
 	if (lexemes[i] == "else") {
@@ -495,7 +510,7 @@ bool SyntaxAnalyzer::elseBlock(const vector<string>& tokens, const vector<string
 		}
 	}
 	else { // epsilon
-		cout << "\t<Empty> -> epsilon" << endl;
+		//cout << "\t<Empty> -> epsilon" << endl;
 		writer << "\t<Empty> -> epsilon" << endl;
 		--i;
 		return true;
@@ -505,7 +520,7 @@ bool SyntaxAnalyzer::elseBlock(const vector<string>& tokens, const vector<string
 }
 
 bool SyntaxAnalyzer::whileStatement(const vector<string>& tokens, const vector<string>& lexemes, const vector<int>& line_number, int &i, ofstream& writer) {
-	cout << "\t<While> -> while <Conditional> do <StatementBlock> whileend" << endl;
+	//cout << "\t<While> -> while <Conditional> do <StatementBlock> whileend" << endl;
 	writer << "\t<While> -> while <Conditional> do <StatementBlock> whileend" << endl;
 
 	if (lexemes[i] == "while") {

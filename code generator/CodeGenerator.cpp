@@ -1,4 +1,5 @@
 #include "CodeGenerator.h"
+#include <iomanip>
 
 
 
@@ -14,7 +15,7 @@ CodeGenerator::~CodeGenerator()
 	assemblyCodes.clear();
 }
 
-int CodeGenerator::symbolExist(string id) {
+int CodeGenerator::findSymbol(string id) {
 	for (int i = 0; i < symbolTable.size(); ++i) {
 		if (symbolTable[i].identifier == id)
 			return i;
@@ -22,12 +23,24 @@ int CodeGenerator::symbolExist(string id) {
 	return -1;
 }
 
-void CodeGenerator::addSymbol(string id, string valueType) {
+bool CodeGenerator::addSymbol(string id, string valueType) {
+	if (findSymbol(id) > -1) return false;
+
 	Symbol s;
 	s.identifier = id;
 	s.address = to_string(symbolTable.size() + 5000);
 	s.type = valueType;
 	symbolTable.push_back(s);
+	return true;
+}
+
+void CodeGenerator::printSymbolTable() const {
+	cout << setw(12) << left << "IDENTIFIER" << setw(8) << right << "ADDRESS" << setw(8) << right << "TYPE" << endl;
+	for (int i = 0; i < symbolTable.size(); ++i) {
+		cout << setw(12) << left << symbolTable[i].identifier << setw(8) << right
+			<< symbolTable[i].address << setw(8) << right << symbolTable[i].type << endl;
+	}
+	cout << endl;
 }
 
 void CodeGenerator::generateCode(string com, string op) {

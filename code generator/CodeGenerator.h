@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <fstream>
+#include <iostream>
 
 using namespace std;
 
@@ -23,13 +24,18 @@ public:
 	// variables
 	vector<Symbol> symbolTable;
 	vector<Code> assemblyCodes;
+	string typeToAdd;
 
 	// functions
 	CodeGenerator();
 	~CodeGenerator();
 
-	void addSymbol(string id, string valueType);
-	int symbolExist(string id);
+	// symbol table functions
+	bool addSymbol(string id, string valueType);
+	int findSymbol(string id);
+	void printSymbolTable() const;
+
+	// assembly code functions
 	void generateCode(string com, string op);
 
 };
