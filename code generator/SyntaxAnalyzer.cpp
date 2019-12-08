@@ -41,7 +41,7 @@ void SyntaxAnalyzer::analyze(const vector<string>& tokens, const vector<string>&
 	writer << endl << "Finished." << endl;
 	writer.close();
 
-	cg.printSymbolTable();
+	cg.printCode();
 }
 
 bool SyntaxAnalyzer::nextToken(const vector<string>& tokens, const vector<string>& lexemes, int& i, ofstream& writer) {
@@ -125,10 +125,19 @@ bool SyntaxAnalyzer::assign(const vector<string>& tokens, const vector<string>& 
 	writer << "\t<Assign> -> identifier = <Expression>;" << endl;
 
 	if (tokens[i] == "identifier") {
+		string id = lexemes[i];
+		int idLocation = cg.findSymbol(id);
+		if (idLocation == -1) {
+			cout << "Error: " << id << " is not declared - line " << line_number[i] << endl;
+			return false;
+		}
+
 		if (!nextToken(tokens, lexemes, i, writer))  return false;
 		if (lexemes[i] == "=") {
 			if (!nextToken(tokens, lexemes, i, writer)) return false;
 			if (expression(tokens, lexemes, line_number, i, writer)) {
+				cg.generateCode("POPM", cg.getSymbolAddress(idLocation));
+
 				if (!nextToken(tokens, lexemes, i, writer)) return false;
 				if (lexemes[i] == ";") {
 					return true;
@@ -186,8 +195,13 @@ bool SyntaxAnalyzer::expressionPrime(const vector<string>& tokens, const vector<
 	writer << "\t<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>" << endl;
 
 	if (lexemes[i] == "+" || lexemes[i] == "-") {
+		string op = lexemes[i];
+
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
 		if (term(tokens, lexemes, line_number, i, writer)) {
+			string command = (op == "+") ? "ADD" : "SUB";
+			cg.generateCode(command, "nil");
+
 			if (!nextToken(tokens, lexemes, i, writer)) return false;
 			if (expressionPrime(tokens, lexemes, line_number, i, writer)) {
 				return true;
@@ -222,8 +236,13 @@ bool SyntaxAnalyzer::termPrime(const vector<string>& tokens, const vector<string
 	writer << "\t<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>" << endl;
 
 	if (lexemes[i] == "*" || lexemes[i] == "/") {
+		string op = lexemes[i];
+
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
 		if (factor(tokens, lexemes, line_number, i, writer)) {
+			string command = (op == "*") ? "MUL" : "DIV";
+			cg.generateCode(command, "nil");
+
 			if (!nextToken(tokens, lexemes, i, writer)) return false;
 			if (termPrime(tokens, lexemes, line_number, i, writer)) {
 				return true;
@@ -245,8 +264,11 @@ bool SyntaxAnalyzer::factor(const vector<string>& tokens, const vector<string>& 
 	writer << "\t<Factor> -> - <Primary> | <Primary>" << endl;
 
 	if (lexemes[i] == "-") {
+		cg.generateCode("PUSHI", "0");
+
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
-		if (primary(tokens, lexemes, line_number, i, writer)) {
+		if (primary(tokens, lexemes, line_number, i, writer)) {		
+			cg.generateCode("SUB", "nil");
 			return true;
 		}
 	}
@@ -264,6 +286,25 @@ bool SyntaxAnalyzer::primary(const vector<string>& tokens, const vector<string>&
 	writer << "\t<Primary> -> identifier | int | ( <Expression> ) | real | true | false" << endl;
 
 	if (tokens[i] == "identifier" || tokens[i] == "int" || tokens[i] == "real" || lexemes[i] == "true" || lexemes[i] == "false") {
+		if (tokens[i] == "identifier") {
+			string id = lexemes[i];
+			int idLocation = cg.findSymbol(id);
+			if (idLocation == -1) {
+				cout << "Error: " << id << " is not declared - line " << line_number[i] << endl;
+				return false;
+			}
+			cg.generateCode("PUSHM", cg.getSymbolAddress(idLocation));
+		}
+		
+		if (tokens[i] == "int" || tokens[i] == "real") 
+			cg.generateCode("PUSHI", lexemes[i]);
+		
+		if (lexemes[i] == "true")
+			cg.generateCode("PUSHI", "1");
+
+		if (lexemes[i] == "false")
+			cg.generateCode("PUSHI", "0");
+
 		return true;
 	}
 	if (lexemes[i] == "(") {
@@ -296,7 +337,7 @@ bool SyntaxAnalyzer::declare(const vector<string>& tokens, const vector<string>&
 		if (tokens[i] == "identifier") {
 			string id = lexemes[i];
 			if (!cg.addSymbol(id, cg.typeToAdd)) {
-				cout << "Error: " << lexemes[i] << " variable is already declared - line " << line_number[i] << endl;
+				cout << "Error: " << lexemes[i] << " is already declared - line " << line_number[i] << endl;
 				return false;
 			}
 
