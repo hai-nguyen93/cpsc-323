@@ -406,16 +406,23 @@ bool SyntaxAnalyzer::conditionalPrime(const vector<string>& tokens, const vector
 	//cout << "\t<ConditionalPrime> -> <Relop> <Expression> | <Empty>" << endl;
 	writer << "\t<ConditionalPrime> -> <Relop> <Expression> | <Empty>" << endl;
 
-	if (relop(tokens, lexemes, line_number, i, writer)) {
-		if (!nextToken(tokens, lexemes, i, writer)) return false;
-		if (expression(tokens, lexemes, line_number, i, writer)) {
-			return true;
+	if (lexemes[i] == "<" || lexemes[i] == "=" || lexemes[i] == ">"){ // First(<Relop>)
+		if (relop(tokens, lexemes, line_number, i, writer)) {
+			if (!nextToken(tokens, lexemes, i, writer)) return false;
+			if (expression(tokens, lexemes, line_number, i, writer)) {
+				cg.generateCode(cg.relOpToAdd, "nil");
+				cg.jumpStack.push_back(cg.assemblyCodes.size());
+				cg.generateCode("JUMPZ", "nil");
+				return true;
+			}
 		}
 	}
 	else{ // epsilon
 		//cout << "\t<Empty> -> epsilon" << endl;
 		writer << "\t<Empty> -> epsilon" << endl;
 		--i;
+		cg.jumpStack.push_back(cg.assemblyCodes.size());
+		cg.generateCode("JUMPZ", "nil");
 		return true;
 	}
 
@@ -428,26 +435,36 @@ bool SyntaxAnalyzer::relop(const vector<string>& tokens, const vector<string>& l
 
 	if (lexemes[i] == "<") { // < or <= or <>
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
-		if (lexemes[i] == "=") // <= 
+		if (lexemes[i] == "=") { // <= 
+			cg.relOpToAdd = "LEQ";
 			return true;
-		else if (lexemes[i] == ">") // <>
+		}
+		else if (lexemes[i] == ">") { // <>
+			cg.relOpToAdd = "NEQ";
 			return true;
+		}
 		else{ // <			
 			--i;
+			cg.relOpToAdd = "LES";
 			return true;
 		}	
 	}
 	if (lexemes[i] == "=") { // ==
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
-		if (lexemes[i] == "=")
+		if (lexemes[i] == "=") {
+			cg.relOpToAdd = "EQU";
 			return true;
+		}
 	}
 	if (lexemes[i] == ">") { // > or >=
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
-		if (lexemes[i] == "=") // >=
+		if (lexemes[i] == "=") { // >=
+			cg.relOpToAdd = "GEQ";
 			return true;
+		}
 		else{ // >
 			--i;
+			cg.relOpToAdd = "GRT";
 			return true;
 		}
 	}
@@ -462,6 +479,8 @@ bool SyntaxAnalyzer::ifStatement(const vector<string>& tokens, const vector<stri
 	writer << "\t<If> -> if <Conditional> then <StatementBlock> <ElseBlock> endif" << endl;
 
 	if (lexemes[i] == "if") {
+		
+
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
 		if (conditional(tokens, lexemes, line_number, i, writer)) {
 			if (!nextToken(tokens, lexemes, i, writer)) return false;
@@ -564,7 +583,10 @@ bool SyntaxAnalyzer::whileStatement(const vector<string>& tokens, const vector<s
 	//cout << "\t<While> -> while <Conditional> do <StatementBlock> whileend" << endl;
 	writer << "\t<While> -> while <Conditional> do <StatementBlock> whileend" << endl;
 
-	if (lexemes[i] == "while") {
+	if (lexemes[i] == "while") {			
+		cg.generateCode("Label", "nil");
+		int instrAddress = cg.assemblyCodes.size();
+		
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
 		if (conditional(tokens, lexemes, line_number, i, writer)) {
 			if (!nextToken(tokens, lexemes, i, writer)) return false;
@@ -576,6 +598,10 @@ bool SyntaxAnalyzer::whileStatement(const vector<string>& tokens, const vector<s
 						writer << "Error: missing whileend - line " << line_number[i] << endl;
 						return false;
 					}
+
+					cg.generateCode("JUMP", to_string(instrAddress));
+					cg.backPatch(cg.assemblyCodes.size()+1);
+
 					if (lexemes[i] == "whileend") {
 						return true;
 					}

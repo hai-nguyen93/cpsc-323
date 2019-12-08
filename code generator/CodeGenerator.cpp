@@ -7,12 +7,14 @@ CodeGenerator::CodeGenerator()
 {
 	symbolTable.clear();
 	assemblyCodes.clear();
+	jumpStack.clear();
 }
 
 CodeGenerator::~CodeGenerator()
 {
 	symbolTable.clear();
 	assemblyCodes.clear();
+	jumpStack.clear();
 }
 
 int CodeGenerator::findSymbol(string id) {
@@ -59,10 +61,19 @@ void CodeGenerator::generateCode(string com, string operand) {
 	assemblyCodes.push_back(c);
 }
 
+void CodeGenerator::backPatch(int jumpAddress) {
+	if (jumpStack.size() > 0) {
+		int addr = jumpStack.back();
+		jumpStack.pop_back();
+		assemblyCodes[addr].operand = to_string(jumpAddress);
+	}
+}
+
+
 void CodeGenerator::printCode() const {
 	ofstream writer("assembly_code.txt");
 
-	cout << endl << assemblyCodes.size() << endl;
+	cout << endl;
 	for (int i = 0; i < assemblyCodes.size(); ++i) {
 		cout << setw(5) << left << assemblyCodes[i].line
 			<< setw(8) << left << assemblyCodes[i].command

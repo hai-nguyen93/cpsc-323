@@ -24,7 +24,9 @@ public:
 	// variables
 	vector<Symbol> symbolTable;
 	vector<Code> assemblyCodes;
+	vector<int> jumpStack;
 	string typeToAdd;
+	string relOpToAdd;
 
 	// functions
 	CodeGenerator();
@@ -39,5 +41,6 @@ public:
 	// assembly code functions
 	void generateCode(string com, string operand);
 	void printCode() const;
+	void backPatch(int jumpAddress);
 };
 
