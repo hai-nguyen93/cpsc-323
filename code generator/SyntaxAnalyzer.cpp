@@ -479,7 +479,7 @@ bool SyntaxAnalyzer::ifStatement(const vector<string>& tokens, const vector<stri
 	writer << "\t<If> -> if <Conditional> then <StatementBlock> <ElseBlock> endif" << endl;
 
 	if (lexemes[i] == "if") {
-		
+		int instrAddress = cg.assemblyCodes.size();
 
 		if (!nextToken(tokens, lexemes, i, writer)) return false;
 		if (conditional(tokens, lexemes, line_number, i, writer)) {
@@ -487,14 +487,23 @@ bool SyntaxAnalyzer::ifStatement(const vector<string>& tokens, const vector<stri
 			if (lexemes[i] == "then") {
 				if (!nextToken(tokens, lexemes, i, writer)) return false;
 				if (statementBlock(tokens, lexemes, line_number, i, writer)) {
+
 					if (!nextToken(tokens, lexemes, i, writer)) return false;
+
+					if (lexemes[i] == "else"){				
+						cg.generateCode("JUMP", "nil");
+						cg.backPatch(cg.assemblyCodes.size() + 1);
+						cg.jumpStack.push_back(cg.assemblyCodes.size() - 1);
+					}
+
 					if (elseBlock(tokens, lexemes, line_number, i, writer)) {
 						if (!nextToken(tokens, lexemes, i, writer)) {
 							cout << "Error: missing \"endif\" - line " << line_number[i] << endl;
 							writer << "Error: missing \"endif\" - line " << line_number[i] << endl;
 							return false;
 						}
-						if (lexemes[i] == "endif") {
+						if (lexemes[i] == "endif") {	
+							cg.backPatch(cg.assemblyCodes.size() + 1);
 							return true;
 						}
 						else {
