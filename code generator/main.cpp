@@ -1,17 +1,9 @@
 // Hai Nguyen
 // CPSC 323
-// Assignment 2
-// Syntax analysis
-// This program reads a source code file or 1 line of code and analyze the syntax (predictive RDP).
-// The result is printed to the screen and "parse_result.txt" file
-
-// Progress: this program can parse:
-// - Arithmetic assignment statement
-// - Arithmetic expression statement
-// - Declare statement
-// - If statement
-// - While statement		
-
+// Assignment 3
+// Intermediate Code Generator
+// This program reads a source code file or 1 line of code and generate intermediate code (predictive RDP + Syntax Directed Translation).
+// The result is printed to the screen and "assembly_code.txt" file
 
 #include <iostream>
 #include <fstream>
