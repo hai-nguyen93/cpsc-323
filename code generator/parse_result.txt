@@ -1,0 +1,124 @@
+-Token: keyword	-Lexeme: int
+	<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <While>
+	<Decalre> -> <Type> identifier <MoreIDs>;
+<Type> -> int | float | bool
+-Token: identifier	-Lexeme: max
+-Token: separator	-Lexeme: ;
+	<MoreIDs> -> , id <MoreIDs> | <Empty>
+	<Empty> -> epsilon
+
+-Token: keyword	-Lexeme: int
+	<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <While>
+	<Decalre> -> <Type> identifier <MoreIDs>;
+<Type> -> int | float | bool
+-Token: identifier	-Lexeme: a
+-Token: separator	-Lexeme: ;
+	<MoreIDs> -> , id <MoreIDs> | <Empty>
+	<Empty> -> epsilon
+
+-Token: identifier	-Lexeme: a
+	<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <While>
+	<Assign> -> identifier = <Expression>;
+-Token: operator	-Lexeme: =
+-Token: int	-Lexeme: 0
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> identifier | int | ( <Expression> ) | real | true | false
+-Token: separator	-Lexeme: ;
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
+	<Empty> -> epsilon
+
+-Token: identifier	-Lexeme: max
+	<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <While>
+	<Assign> -> identifier = <Expression>;
+-Token: operator	-Lexeme: =
+-Token: int	-Lexeme: 15
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> identifier | int | ( <Expression> ) | real | true | false
+-Token: separator	-Lexeme: ;
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
+	<Empty> -> epsilon
+
+-Token: keyword	-Lexeme: if
+	<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <While>
+	<If> -> if <Conditional> then <StatementBlock> <ElseBlock> endif
+-Token: identifier	-Lexeme: a
+	<Conditional> -> <Expression> <ConditionalPrime>
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> identifier | int | ( <Expression> ) | real | true | false
+-Token: operator	-Lexeme: >
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
+	<Empty> -> epsilon
+	<ConditionalPrime> -> <Relop> <Expression> | <Empty>
+	<Relop> -> < | <= | == | <> | >= | >
+-Token: identifier	-Lexeme: max
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> identifier | int | ( <Expression> ) | real | true | false
+-Token: keyword	-Lexeme: then
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
+	<Empty> -> epsilon
+-Token: separator	-Lexeme: {
+	<StatementBlock> -> { <Statement> <moreStatement>
+-Token: identifier	-Lexeme: a
+	<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <While>
+	<Assign> -> identifier = <Expression>;
+-Token: operator	-Lexeme: =
+-Token: identifier	-Lexeme: max
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> identifier | int | ( <Expression> ) | real | true | false
+-Token: separator	-Lexeme: ;
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
+	<Empty> -> epsilon
+-Token: separator	-Lexeme: }
+	<moreStatement> -> <Statement> <moreStatement> | }
+-Token: keyword	-Lexeme: else
+	<ElseBlock> -> else <StatementBlock> | <Empty>
+-Token: separator	-Lexeme: {
+	<StatementBlock> -> { <Statement> <moreStatement>
+-Token: identifier	-Lexeme: a
+	<Statement> -> <Expression-statement> | <Assign> | <If> | <Declare> | <While>
+	<Assign> -> identifier = <Expression>;
+-Token: operator	-Lexeme: =
+-Token: identifier	-Lexeme: max
+	<Expression> -> <Term> <ExpressionPrime>
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> identifier | int | ( <Expression> ) | real | true | false
+-Token: operator	-Lexeme: -
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
+-Token: int	-Lexeme: 1
+	<Term> -> <Factor> <TermPrime>
+	<Factor> -> - <Primary> | <Primary>
+	<Primary> -> identifier | int | ( <Expression> ) | real | true | false
+-Token: separator	-Lexeme: ;
+	<TermPrime> -> * <Factor> <TermPrime> | / <Factor> <TermPrime> | <Empty>
+	<Empty> -> epsilon
+	<ExpressionPrime> -> + <Term> <ExpressionPrime> | - <Term> <ExpressionPrime> | <Empty>
+	<Empty> -> epsilon
+-Token: separator	-Lexeme: }
+	<moreStatement> -> <Statement> <moreStatement> | }
+-Token: keyword	-Lexeme: endif
+
+
+Finished.
